@@ -22,4 +22,12 @@
 
     <string name="alerts_coming_soon">Alerts Screen Coming Soon!</string>
     <string name="settings_coming_soon">Settings Screen Coming Soon!</string>
+
+    <string name="add_favorite_location">Add Favorite Location</string>
+    <string name="location_name">Location Name</string>
+    <string name="location_placeholder">e.g., New York, London, Tokyo</string>
+    <string name="tip">Tip:</string>
+    <string name="tip_description">In a full implementation, you would see a map here with an autocomplete search bar to drop a marker or type a city name.</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
 </resources>

@@ -84,6 +84,9 @@ dependencies {
 
     // Jetpack Compose Navigation
     implementation("androidx.navigation:navigation-compose:2.8.5")
+
+    // MapLibre for Android (Open-source map integration)
+    implementation("org.maplibre.gl:android-sdk:11.0.0")
 }
 
 // FORCE Gradle to strictly use the Kotlin 2.1.10 standard libraries to prevent KSP crash

@@ -9,6 +9,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +33,8 @@ fun FavoritesScreen(
     navController: NavHostController
 ) {
     val favorites by viewModel.favorites.collectAsStateWithLifecycle()
+
+    var showAddDialog by remember { mutableStateOf(false) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -64,15 +69,14 @@ fun FavoritesScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { viewModel.addFavorite("Alexandria", 31.2001, 29.9187) },
+                onClick = {
+                    showAddDialog = true
+                },
                 containerColor = WeatherNavy,
                 contentColor = Color.White,
                 shape = CircleShape
             ) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add_location)
-                )
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_location))
             }
         },
         containerColor = Color.White
@@ -98,6 +102,17 @@ fun FavoritesScreen(
                     }
                 }
             }
+        }
+
+        // Show Dialog if state is true
+        if (showAddDialog) {
+            AddLocationDialog(
+                onDismiss = { showAddDialog = false },
+                onAdd = { cityName ->
+                    viewModel.addFavorite(cityName, 31.2001, 29.9187)
+                    showAddDialog = false
+                }
+            )
         }
     }
 }
