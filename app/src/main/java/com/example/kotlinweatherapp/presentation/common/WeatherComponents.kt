@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,7 +58,7 @@ fun CurrentWeatherHero(
 fun HourlyForecastList(forecasts: List<HourlyForecastUi>, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(horizontal = 20.dp)) {
         Text(
-            text = "Hourly Forecast",
+            text = stringResource(R.string.hourly_forecast),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             color = WeatherNavy
@@ -99,7 +100,7 @@ fun DailyForecastList(forecasts: List<DailyForecastUi>, modifier: Modifier = Mod
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            text = "5-Day Forecast",
+            text = stringResource(R.string.five_day_forecast),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             color = WeatherNavy
@@ -144,11 +145,7 @@ fun DailyForecastList(forecasts: List<DailyForecastUi>, modifier: Modifier = Mod
 
 @Composable
 fun WeatherStatsCard(
-    humidity: Int,
-    windSpeed: Double,
-    pressure: Int,
-    clouds: Int,
-    modifier: Modifier = Modifier
+    humidity: Int, windSpeed: Double, pressure: Int, clouds: Int, modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
@@ -165,13 +162,13 @@ fun WeatherStatsCard(
             ) {
                 StatTile(
                     iconRes = R.drawable.ic_humidity,
-                    label = "Humidity",
+                    label = stringResource(R.string.humidity),
                     value = "${humidity}%",
                     modifier = Modifier.weight(1f)
                 )
                 StatTile(
                     iconRes = R.drawable.ic_wind,
-                    label = "Wind",
+                    label = stringResource(R.string.wind_speed),
                     value = "${windSpeed} m/s",
                     modifier = Modifier.weight(1f)
                 )
@@ -182,13 +179,13 @@ fun WeatherStatsCard(
             ) {
                 StatTile(
                     iconRes = R.drawable.ic_pressure,
-                    label = "Pressure",
+                    label = stringResource(R.string.pressure),
                     value = "${pressure} hPa",
                     modifier = Modifier.weight(1f)
                 )
                 StatTile(
                     iconRes = R.drawable.ic_clouds,
-                    label = "Clouds",
+                    label = stringResource(R.string.clouds),
                     value = "${clouds}%",
                     modifier = Modifier.weight(1f)
                 )

@@ -7,24 +7,39 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
+import com.example.kotlinweatherapp.R
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.kotlinweatherapp.presentation.common.*
 import com.example.kotlinweatherapp.presentation.navigation.WeatherBottomNavBar
 import com.example.kotlinweatherapp.ui.theme.WeatherBackground
 import com.example.kotlinweatherapp.ui.theme.WeatherNavy
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(
+    viewModel: HomeViewModel,
+    navController: NavHostController
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var selectedNavIndex by remember { mutableIntStateOf(0) }
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     Scaffold(
         bottomBar = {
             WeatherBottomNavBar(
-                selectedIndex = selectedNavIndex,
-                onItemSelected = { selectedNavIndex = it })
+                currentRoute = currentRoute,
+                onNavigate = { route ->
+                    navController.navigate(route) {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
         },
         containerColor = WeatherBackground
     ) { paddingValues ->
@@ -50,7 +65,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
                         Spacer(Modifier.height(8.dp))
                         Button(onClick = {
                             viewModel.loadWeather(31.2001, 29.9187)
-                        }) { Text("Retry") }
+                        }) { Text(stringResource(R.string.retry)) }
                     }
                 }
 
@@ -86,10 +101,4 @@ fun HomeScreen(viewModel: HomeViewModel) {
             }
         }
     }
-}
-
-@Preview
-@Composable
-private fun HomeScreenPre() {
-//    HomeScreen()
 }

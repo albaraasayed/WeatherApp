@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">KotlinWeatherApp</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_alerts">Alerts</string>
+    <string name="nav_settings">Settings</string>
+
+    <string name="retry">Retry</string>
+    <string name="hourly_forecast">Hourly Forecast</string>
+    <string name="five_day_forecast">5-Day Forecast</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind_speed">Wind</string>
+    <string name="pressure">Pressure</string>
+    <string name="clouds">Clouds</string>
+
+    <string name="favorite_locations">Favorite Locations</string>
+    <string name="add_location">Add Location</string>
+    <string name="no_favorite_locations_saved">No favorite locations saved</string>
+    <string name="tap_to_add_location">Tap the + button to add a location</string>
+    <string name="delete">Delete</string>
+
+    <string name="alerts_coming_soon">Alerts Screen Coming Soon!</string>
+    <string name="settings_coming_soon">Settings Screen Coming Soon!</string>
 </resources>
