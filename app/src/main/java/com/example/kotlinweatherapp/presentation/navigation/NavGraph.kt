@@ -15,12 +15,15 @@ import com.example.kotlinweatherapp.presentation.features.home.HomeScreen
 import com.example.kotlinweatherapp.presentation.features.home.HomeViewModel
 import androidx.compose.ui.res.stringResource
 import com.example.kotlinweatherapp.R
+import com.example.kotlinweatherapp.presentation.features.settings.SettingsScreen
+import com.example.kotlinweatherapp.presentation.features.settings.SettingsViewModel
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
     homeViewModel: HomeViewModel,
-    favoritesViewModel: FavoritesViewModel
+    favoritesViewModel: FavoritesViewModel,
+    settingsViewModel: SettingsViewModel
 ) {
     NavHost(
         navController = navController,
@@ -38,9 +41,7 @@ fun NavGraph(
             }
         }
         composable(Routes.Settings.route) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(stringResource(R.string.settings_coming_soon))
-            }
+            SettingsScreen(viewModel = settingsViewModel, navController = navController)
         }
     }
 }

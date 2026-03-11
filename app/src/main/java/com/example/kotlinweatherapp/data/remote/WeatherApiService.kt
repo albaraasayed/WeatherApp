@@ -1,5 +1,6 @@
 package com.example.kotlinweatherapp.data.remote
 
+import com.example.kotlinweatherapp.data.remote.dto.GeocodingResponse
 import com.example.kotlinweatherapp.data.remote.dto.WeatherResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -14,4 +15,11 @@ interface WeatherApiService {
         @Query("units") units: String = "metric",
         @Query("lang") lang: String = "en"
     ): Response<WeatherResponse>
+
+    @GET("https://api.openweathermap.org/geo/1.0/direct")
+    suspend fun searchCity(
+        @Query("q") cityName: String,
+        @Query("limit") limit: Int = 5,
+        @Query("appid") apiKey: String
+    ): Response<List<GeocodingResponse>>
 }

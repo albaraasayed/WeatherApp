@@ -87,6 +87,12 @@ dependencies {
 
     // MapLibre for Android (Open-source map integration)
     implementation("org.maplibre.gl:android-sdk:11.0.0")
+
+    // Preferences DataStore for Settings
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    // Google Play Services for Location
+    implementation("com.google.android.gms:play-services-location:21.2.0")
 }
 
 // FORCE Gradle to strictly use the Kotlin 2.1.10 standard libraries to prevent KSP crash

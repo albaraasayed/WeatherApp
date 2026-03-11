@@ -28,13 +28,12 @@ import com.example.kotlinweatherapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoritesScreen(
-    viewModel: FavoritesViewModel,
-    navController: NavHostController
-) {
+fun FavoritesScreen(viewModel: FavoritesViewModel, navController: NavHostController) {
     val favorites by viewModel.favorites.collectAsStateWithLifecycle()
-
     var showAddDialog by remember { mutableStateOf(false) }
+
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -69,9 +68,7 @@ fun FavoritesScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    showAddDialog = true
-                },
+                onClick = { showAddDialog = true },
                 containerColor = WeatherNavy,
                 contentColor = Color.White,
                 shape = CircleShape
@@ -81,35 +78,29 @@ fun FavoritesScreen(
         },
         containerColor = Color.White
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             if (favorites.isEmpty()) {
                 EmptyFavoritesState(modifier = Modifier.align(Alignment.Center))
             } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+                LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     items(favorites) { location ->
-                        FavoriteItemCard(
-                            location = location,
-                            onDeleteClick = { viewModel.removeFavorite(location) }
-                        )
+                        FavoriteItemCard(location = location, onDeleteClick = { viewModel.removeFavorite(location) })
                     }
                 }
             }
         }
 
-        // Show Dialog if state is true
         if (showAddDialog) {
             AddLocationDialog(
-                onDismiss = { showAddDialog = false },
-                onAdd = { cityName ->
-                    viewModel.addFavorite(cityName, 31.2001, 29.9187)
+                searchQuery = searchQuery,
+                searchResults = searchResults,
+                onQueryChanged = { viewModel.onSearchQueryChanged(it) },
+                onDismiss = {
+                    viewModel.clearSearch()
+                    showAddDialog = false
+                },
+                onLocationSelected = { name, lat, lon ->
+                    viewModel.addFavorite(name, lat, lon)
                     showAddDialog = false
                 }
             )

@@ -30,4 +30,19 @@
     <string name="tip_description">In a full implementation, you would see a map here with an autocomplete search bar to drop a marker or type a city name.</string>
     <string name="cancel">Cancel</string>
     <string name="add">Add</string>
+
+    <string name="settings">Settings</string>
+    <string name="location_settings">Location Settings</string>
+    <string name="gps">GPS</string>
+    <string name="map">Map</string>
+    <string name="temperature_unit">Temperature Unit</string>
+    <string name="celsius">Celsius</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="wind_speed_unit">Wind Speed Unit</string>
+    <string name="m_s">m/s</string>
+    <string name="mph">mph</string>
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
 </resources>

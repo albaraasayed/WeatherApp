@@ -64,7 +64,7 @@ fun HomeScreen(
                         Text(text = state.message, color = WeatherNavy)
                         Spacer(Modifier.height(8.dp))
                         Button(onClick = {
-                            viewModel.loadWeather(31.2001, 29.9187)
+                            viewModel.loadWeather(viewModel.currentLat, viewModel.currentLon)
                         }) { Text(stringResource(R.string.retry)) }
                     }
                 }

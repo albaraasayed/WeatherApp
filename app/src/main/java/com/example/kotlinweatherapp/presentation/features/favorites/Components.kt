@@ -61,10 +61,7 @@ fun EmptyFavoritesState(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun FavoriteItemCard(
-    location: FavoriteLocation,
-    onDeleteClick: () -> Unit
-) {
+fun FavoriteItemCard(location: FavoriteLocation, onDeleteClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -87,9 +84,7 @@ fun FavoriteItemCard(
                 modifier = Modifier.size(20.dp)
             )
         }
-
         Spacer(modifier = Modifier.width(16.dp))
-
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = location.cityName,
@@ -103,7 +98,6 @@ fun FavoriteItemCard(
                 fontSize = 13.sp
             )
         }
-
         IconButton(onClick = onDeleteClick) {
             Icon(
                 imageVector = Icons.Outlined.DeleteOutline,
