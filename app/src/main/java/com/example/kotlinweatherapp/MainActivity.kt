@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -117,7 +118,8 @@ class MainActivity : AppCompatActivity() {
 
                 val navController = rememberNavController()
                 Scaffold(
-                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+                    containerColor = MaterialTheme.colorScheme.background
                 ) { padding ->
                     Box(modifier = Modifier.padding(padding)) {
                         NavGraph(

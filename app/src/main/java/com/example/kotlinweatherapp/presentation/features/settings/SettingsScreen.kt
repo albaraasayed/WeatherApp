@@ -45,7 +45,12 @@ fun SettingsScreen(
             Column {
                 TopAppBar(
                     title = {
-                        Text(text = stringResource(R.string.settings), color = WeatherNavy, fontWeight = FontWeight.Bold, fontSize = 24.sp)
+                        Text(
+                            text = stringResource(R.string.settings),
+                            color = WeatherNavy,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp
+                        )
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
                 )
@@ -67,15 +72,21 @@ fun SettingsScreen(
         containerColor = Color.White
     ) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(24.dp).verticalScroll(rememberScrollState()),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             SettingsSelectionRow(
                 title = stringResource(R.string.location_settings),
-                options = listOf("gps" to stringResource(R.string.gps), "map" to stringResource(R.string.map)),
+                options = listOf(
+                    "gps" to stringResource(R.string.gps),
+                    "map" to stringResource(R.string.map)
+                ),
                 selectedKey = locationPref,
                 onSelect = { selected ->
-                    // 🌟 FIX: Handle Map click differently!
                     if (selected == "map") {
                         viewModel.showMapDialog.value = true
                     } else {
@@ -97,18 +108,28 @@ fun SettingsScreen(
 
             SettingsSelectionRow(
                 title = stringResource(R.string.wind_speed_unit),
-                options = listOf("ms" to stringResource(R.string.m_s), "mph" to stringResource(R.string.mph)),
+                options = listOf(
+                    "ms" to stringResource(R.string.m_s),
+                    "mph" to stringResource(R.string.mph)
+                ),
                 selectedKey = windUnitPref,
                 onSelect = { viewModel.updateWindUnitPref(it) }
             )
 
             SettingsSelectionRow(
                 title = stringResource(R.string.language),
-                options = listOf("en" to stringResource(R.string.english), "ar" to stringResource(R.string.arabic)),
+                options = listOf(
+                    "en" to stringResource(R.string.english),
+                    "ar" to stringResource(R.string.arabic)
+                ),
                 selectedKey = langPref,
                 onSelect = { selectedLang ->
                     viewModel.updateLangPref(selectedLang)
-                    AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(selectedLang))
+                    AppCompatDelegate.setApplicationLocales(
+                        LocaleListCompat.forLanguageTags(
+                            selectedLang
+                        )
+                    )
                 }
             )
         }
@@ -118,11 +139,28 @@ fun SettingsScreen(
             var selectedLon by remember { mutableStateOf<Double?>(null) }
 
             Dialog(onDismissRequest = { viewModel.showMapDialog.value = false }) {
-                Surface(shape = RoundedCornerShape(24.dp), color = Color.White, modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        Text(text = "Select Home Location", color = WeatherNavy, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Surface(
+                    shape = RoundedCornerShape(24.dp),
+                    color = Color.White,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(24.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.select_home_location),
+                            color = WeatherNavy,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
 
-                        Box(modifier = Modifier.fillMaxWidth().height(300.dp).clip(RoundedCornerShape(12.dp))) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                        ) {
                             com.example.kotlinweatherapp.presentation.common.MapLibreMapView(
                                 modifier = Modifier.fillMaxSize(),
                                 onLocationSelected = { lat, lon ->

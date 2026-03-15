@@ -6,6 +6,7 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -26,14 +27,12 @@ class WeatherCheckWorker(
         val settingsRepo = SettingsRepository(applicationContext)
         val locationPref = settingsRepo.locationPrefFlow.first()
 
-        // Decide which coordinates to use based on user settings
         val (lat, lon) = if (locationPref == "gps") {
             Pair(settingsRepo.lastGpsLatFlow.first(), settingsRepo.lastGpsLonFlow.first())
         } else {
             Pair(settingsRepo.homeLatFlow.first(), settingsRepo.homeLonFlow.first())
         }
 
-        // If no location has been saved yet, we can't perform the smart check
         if (lat == 0.0 && lon == 0.0) {
             showNotification(
                 title = "Alert Postponed",
@@ -53,14 +52,12 @@ class WeatherCheckWorker(
             if (response.isSuccessful) {
                 val currentCondition = response.body()?.list?.get(0)?.weather?.get(0)?.main
                 
-                // Only trigger if the actual weather matches the user's selected condition
                 if (currentCondition?.equals(alertType, ignoreCase = true) == true) {
                     val message = "Condition matched: $currentCondition"
                     showNotification(alertType, message, isAlarm)
                 }
             }
         } catch (e: Exception) {
-            // Silently fail if network is unreachable; Worker will retry on next schedule
         }
 
         return Result.success()
@@ -71,7 +68,7 @@ class WeatherCheckWorker(
         val channelId = if (isAlarm) "weather_alarm_channel" else "weather_alerts_channel"
         val channelName = if (isAlarm) "Weather Alarms" else "Weather Notifications"
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance =
                 if (isAlarm) NotificationManager.IMPORTANCE_HIGH else NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(channelId, channelName, importance).apply {

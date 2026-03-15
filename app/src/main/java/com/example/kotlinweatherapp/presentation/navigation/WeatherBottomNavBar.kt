@@ -2,10 +2,12 @@ package com.example.kotlinweatherapp.presentation.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,9 +52,9 @@ fun WeatherBottomNavBar(
     )
 
     NavigationBar(
-        modifier = modifier,
-        containerColor = Color.White,
-        tonalElevation = 8.dp
+        modifier = modifier.shadow(24.dp),
+        containerColor = MaterialTheme.colorScheme.background,
+        tonalElevation = 0.dp
     ) {
         items.forEach { item ->
             val isSelected = currentRoute == item.route

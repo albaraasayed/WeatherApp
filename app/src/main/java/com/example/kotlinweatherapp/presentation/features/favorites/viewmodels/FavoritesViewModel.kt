@@ -19,7 +19,8 @@ class FavoritesViewModel(
 
     val favorites: StateFlow<List<FavoriteLocation>> = dao.getAllFavorites()
         .stateIn(
-            viewModelScope, SharingStarted.WhileSubscribed(5000),
+            viewModelScope, SharingStarted
+                .WhileSubscribed(5000),
             emptyList()
         )
 

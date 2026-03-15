@@ -76,4 +76,6 @@
     <string name="condition_thunderstorm">Thunderstorm</string>
     <string name="condition_drizzle">Drizzle</string>
     <string name="custom_location">Custom Location</string>
+
+    <string name="select_home_location">Select Home Location</string>
 </resources>

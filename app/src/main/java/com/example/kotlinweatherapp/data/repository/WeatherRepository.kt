@@ -12,8 +12,6 @@ interface WeatherRepository {
         units: String,
         lang: String
     ): Flow<Resource<WeatherResponse>>
-
     fun searchCity(query: String): Flow<Resource<List<GeocodingResponse>>>
-
     fun reverseGeocode(lat: Double, lon: Double): Flow<Resource<String>>
 }

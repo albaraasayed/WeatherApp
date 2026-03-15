@@ -19,9 +19,12 @@ class AlertsViewModel(
 ) : ViewModel() {
 
     val alerts = dao.getAllAlerts()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(
+            viewModelScope, SharingStarted
+                .WhileSubscribed(5000),
+            emptyList()
+        )
 
-    // 🌟 SHARED FLOW: Used for one-time UI events (like Toast messages)
     private val _eventFlow = MutableSharedFlow<String>()
     val eventFlow: SharedFlow<String> = _eventFlow.asSharedFlow()
 
@@ -54,7 +57,14 @@ class AlertsViewModel(
                 }
             }
 
-            val timeDuration = String.format("%02d:%02d - %02d:%02d", startHour, startMinute, endHour, endMinute)
+            val timeDuration =
+                String.format(
+                    "%02d:%02d - %02d:%02d",
+                    startHour,
+                    startMinute,
+                    endHour,
+                    endMinute
+                )
 
             val alert = AlertEntity(
                 alertType = type,
@@ -66,8 +76,7 @@ class AlertsViewModel(
             )
             val id = dao.insertAlert(alert)
             scheduler.schedule(alert.copy(id = id.toInt()))
-            
-            // Emit event to SharedFlow
+
             _eventFlow.emit("Alert set for $timeDuration")
         }
     }
@@ -75,20 +84,24 @@ class AlertsViewModel(
     fun toggleAlert(alert: AlertEntity, isEnabled: Boolean) {
         viewModelScope.launch {
             val updated = alert.copy(isEnabled = isEnabled)
-            
+
             if (isEnabled) {
-                val startCal = Calendar.getInstance().apply { timeInMillis = updated.startTimeInMillis }
+                val startCal =
+                    Calendar.getInstance().apply { timeInMillis = updated.startTimeInMillis }
                 val endCal = Calendar.getInstance().apply { timeInMillis = updated.endTimeInMillis }
-                
+
                 if (startCal.timeInMillis <= System.currentTimeMillis()) {
                     val diff = endCal.timeInMillis - startCal.timeInMillis
-                    startCal.set(Calendar.DAY_OF_YEAR, Calendar.getInstance().get(Calendar.DAY_OF_YEAR))
+                    startCal.set(
+                        Calendar.DAY_OF_YEAR,
+                        Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
+                    )
                     if (startCal.timeInMillis <= System.currentTimeMillis()) {
                         startCal.add(Calendar.DAY_OF_YEAR, 1)
                     }
                     endCal.timeInMillis = startCal.timeInMillis + diff
                 }
-                
+
                 val finalAlert = updated.copy(
                     startTimeInMillis = startCal.timeInMillis,
                     endTimeInMillis = endCal.timeInMillis
