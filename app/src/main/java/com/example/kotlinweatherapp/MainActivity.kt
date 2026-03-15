@@ -9,26 +9,26 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.example.kotlinweatherapp.data.local.WeatherDatabase
-import com.example.kotlinweatherapp.data.local.datasource.WeatherLocalDataSourceImpl
 import com.example.kotlinweatherapp.data.local.datastore.SettingsRepository
-import com.example.kotlinweatherapp.data.remote.RetrofitClient
-import com.example.kotlinweatherapp.data.remote.datasource.WeatherRemoteDataSourceImpl
-import com.example.kotlinweatherapp.data.repository.WeatherRepositoryImpl
+import com.example.kotlinweatherapp.presentation.WeatherViewModelFactory
 import com.example.kotlinweatherapp.presentation.features.alerts.AlertsViewModel
-import com.example.kotlinweatherapp.presentation.features.alerts.background.AlertScheduler
 import com.example.kotlinweatherapp.presentation.features.favorites.viewmodels.FavoriteDetailsViewModel
 import com.example.kotlinweatherapp.presentation.features.favorites.viewmodels.FavoritesViewModel
-
 import com.example.kotlinweatherapp.presentation.features.home.HomeViewModel
 import com.example.kotlinweatherapp.presentation.features.settings.SettingsViewModel
 import com.example.kotlinweatherapp.presentation.navigation.NavGraph
@@ -46,81 +46,44 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val database = WeatherDatabase.getInstance(applicationContext)
-        val cacheDao = database.weatherCacheDao
-        val favDao = database.favoriteLocationDao
-        val alertDao = database.alertDao
+        val factory = WeatherViewModelFactory(this)
 
-        val localDataSource = WeatherLocalDataSourceImpl(cacheDao, favDao, alertDao)
-        val remoteDataSource = WeatherRemoteDataSourceImpl(RetrofitClient.apiService)
+        homeViewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
+        val favoritesViewModel = ViewModelProvider(this, factory)[FavoritesViewModel::class.java]
+        val alertsViewModel = ViewModelProvider(this, factory)[AlertsViewModel::class.java]
+        val settingsViewModel = ViewModelProvider(this, factory)[SettingsViewModel::class.java]
+        val favoriteDetailsViewModel = ViewModelProvider(this, factory)[FavoriteDetailsViewModel::class.java]
 
-        val repository = WeatherRepositoryImpl(remoteDataSource, localDataSource)
-
-        val alertScheduler = AlertScheduler(applicationContext)
-        settingsRepo = SettingsRepository(applicationContext)
-
-        homeViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                HomeViewModel(repository, settingsRepo) as T
-        })[HomeViewModel::class.java]
-
-        val favoritesViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                FavoritesViewModel(favDao, repository) as T
-        })[FavoritesViewModel::class.java]
-
-        val alertsViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                AlertsViewModel(alertDao, alertScheduler) as T
-        })[AlertsViewModel::class.java]
-
-        val settingsViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                SettingsViewModel(settingsRepo) as T
-        })[SettingsViewModel::class.java]
-
-        val favoriteDetailsViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                FavoriteDetailsViewModel(repository, settingsRepo) as T
-        })[FavoriteDetailsViewModel::class.java]
-
-        locationHelper = LocationHelper(
-            activity = this,
-            onLocationFetched = { lat, lon ->
-                lifecycleScope.launch { settingsRepo.saveLastGpsLocation(lat, lon) }
-                homeViewModel.loadWeather(lat, lon)
-            },
-            onLocationFailed = { homeViewModel.loadWeather(31.2001, 29.9187) }
-        )
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                settingsRepo.locationPrefFlow.collect { pref ->
-                    if (pref == "gps") {
-                        locationHelper.checkAndRequestLocation()
-                    } else {
-                        val lat = settingsRepo.homeLatFlow.first()
-                        val lon = settingsRepo.homeLonFlow.first()
-                        if (lat != 0.0 && lon != 0.0) {
-                            homeViewModel.loadWeather(lat, lon)
-                        }
-                    }
-                }
-            }
-        }
-
+        settingsRepo = SettingsRepository(this)
+        
         setContent {
             WeatherAppTheme {
+                val snackbarHostState = remember { SnackbarHostState() }
                 val context = LocalContext.current
+
+                // Initialize LocationHelper with a callback to show Snackbars
+                locationHelper = remember {
+                    LocationHelper(
+                        activity = this@MainActivity,
+                        onLocationFetched = { lat, lon ->
+                            lifecycleScope.launch { settingsRepo.saveLastGpsLocation(lat, lon) }
+                            homeViewModel.loadWeather(lat, lon)
+                        },
+                        onLocationFailed = { homeViewModel.loadWeather(31.2001, 29.9187) },
+                        onMessage = { message ->
+                            lifecycleScope.launch { snackbarHostState.showSnackbar(message) }
+                        }
+                    )
+                }
+
                 val permissionLauncher = rememberLauncherForActivityResult(
                     ActivityResultContracts.RequestPermission()
                 ) { isGranted ->
-                    // Handle permission result if needed
+                    if (!isGranted) {
+                        lifecycleScope.launch {
+                            snackbarHostState.showSnackbar("Notification permission denied. Weather alerts will not be shown.")
+                        }
+                    }
                 }
 
                 LaunchedEffect(Unit) {
@@ -135,15 +98,38 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
+                // Collect GPS trigger
+                LaunchedEffect(Unit) {
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        settingsRepo.locationPrefFlow.collect { pref ->
+                            if (pref == "gps") {
+                                locationHelper.checkAndRequestLocation()
+                            } else {
+                                val lat = settingsRepo.homeLatFlow.first()
+                                val lon = settingsRepo.homeLonFlow.first()
+                                if (lat != 0.0 && lon != 0.0) {
+                                    homeViewModel.loadWeather(lat, lon)
+                                }
+                            }
+                        }
+                    }
+                }
+
                 val navController = rememberNavController()
-                NavGraph(
-                    navController = navController,
-                    homeViewModel = homeViewModel,
-                    favoritesViewModel = favoritesViewModel,
-                    alertsViewModel = alertsViewModel,
-                    settingsViewModel = settingsViewModel,
-                    favoriteDetailsViewModel = favoriteDetailsViewModel
-                )
+                Scaffold(
+                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+                ) { padding ->
+                    Box(modifier = Modifier.padding(padding)) {
+                        NavGraph(
+                            navController = navController,
+                            homeViewModel = homeViewModel,
+                            favoritesViewModel = favoritesViewModel,
+                            alertsViewModel = alertsViewModel,
+                            settingsViewModel = settingsViewModel,
+                            favoriteDetailsViewModel = favoriteDetailsViewModel
+                        )
+                    }
+                }
             }
         }
     }

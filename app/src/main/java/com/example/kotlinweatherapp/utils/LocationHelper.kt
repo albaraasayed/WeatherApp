@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Looper
 import android.provider.Settings
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
@@ -16,7 +15,8 @@ import com.google.android.gms.location.*
 class LocationHelper(
     private val activity: Activity,
     private val onLocationFetched: (lat: Double, lon: Double) -> Unit,
-    private val onLocationFailed: () -> Unit
+    private val onLocationFailed: () -> Unit,
+    private val onMessage: (String) -> Unit
 ) {
     private val fusedLocationProviderClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(activity)
@@ -51,11 +51,7 @@ class LocationHelper(
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (isLocationEnabled()) getFreshLocation() else enableLocationServices()
             } else {
-                Toast.makeText(
-                    activity,
-                    "Permission denied. Using default location.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                onMessage("Permission denied. Using default location.")
                 onLocationFailed()
             }
         }
@@ -87,7 +83,7 @@ class LocationHelper(
     }
 
     private fun enableLocationServices() {
-        Toast.makeText(activity, "Please turn on location", Toast.LENGTH_LONG).show()
+        onMessage("Please turn on location")
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         activity.startActivity(intent)
     }
