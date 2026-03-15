@@ -1,4 +1,4 @@
-package com.example.kotlinweatherapp.presentation.features.favorites
+package com.example.kotlinweatherapp.presentation.features.favorites.views
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,6 +25,8 @@ import com.example.kotlinweatherapp.ui.theme.WeatherCardBg
 import com.example.kotlinweatherapp.ui.theme.WeatherNavy
 import androidx.compose.ui.res.stringResource
 import com.example.kotlinweatherapp.R
+import com.example.kotlinweatherapp.presentation.features.favorites.viewmodels.FavoritesViewModel
+import com.example.kotlinweatherapp.presentation.navigation.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,18 +75,41 @@ fun FavoritesScreen(viewModel: FavoritesViewModel, navController: NavHostControl
                 contentColor = Color.White,
                 shape = CircleShape
             ) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_location))
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_location)
+                )
             }
         },
         containerColor = Color.White
     ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             if (favorites.isEmpty()) {
                 EmptyFavoritesState(modifier = Modifier.align(Alignment.Center))
             } else {
-                LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
                     items(favorites) { location ->
-                        FavoriteItemCard(location = location, onDeleteClick = { viewModel.removeFavorite(location) })
+                        FavoriteItemCard(
+                            location = location,
+                            onClick = {
+                                navController.navigate(
+                                    Routes.FavoriteDetails.createRoute(
+                                        location.latitude,
+                                        location.longitude,
+                                        location.cityName
+                                    )
+                                )
+                            },
+                            onDeleteClick = { viewModel.removeFavorite(location) }
+                        )
                     }
                 }
             }
@@ -101,6 +126,10 @@ fun FavoritesScreen(viewModel: FavoritesViewModel, navController: NavHostControl
                 },
                 onLocationSelected = { name, lat, lon ->
                     viewModel.addFavorite(name, lat, lon)
+                    showAddDialog = false
+                },
+                onMapLocationSelected = { lat, lon ->
+                    viewModel.addFavoriteFromMap(lat, lon)
                     showAddDialog = false
                 }
             )

@@ -23,7 +23,6 @@ class LocationHelper(
 
     private val REQUEST_LOCATION_CODE = 2005
 
-    // Starts the entire location fetching process
     fun checkAndRequestLocation() {
         if (checkPermission()) {
             if (isLocationEnabled()) {
@@ -47,7 +46,6 @@ class LocationHelper(
         )
     }
 
-    // Handles the result of the permission request dialogue
     fun handlePermissionsResult(requestCode: Int, grantResults: IntArray) {
         if (requestCode == REQUEST_LOCATION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

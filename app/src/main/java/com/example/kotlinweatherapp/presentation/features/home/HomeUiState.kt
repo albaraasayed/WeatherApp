@@ -11,6 +11,7 @@ data class WeatherDataUi(
     val date: String,
     val time: String,
     val temperature: Int,
+    val unitSymbol: String,
     val condition: String,
     val iconUrl: String,
     val humidity: Int,
@@ -24,6 +25,7 @@ data class WeatherDataUi(
 data class HourlyForecastUi(
     val time: String,
     val temperature: Int,
+    val unitSymbol: String,
     val iconUrl: String
 )
 
@@ -32,5 +34,6 @@ data class DailyForecastUi(
     val date: String,
     val highTemp: Int,
     val lowTemp: Int,
+    val unitSymbol: String,
     val iconUrl: String
 )

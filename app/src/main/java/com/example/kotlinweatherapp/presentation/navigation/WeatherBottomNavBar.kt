@@ -27,10 +27,26 @@ fun WeatherBottomNavBar(
     modifier: Modifier = Modifier
 ) {
     val items = listOf(
-        NavItem(R.string.nav_home, R.drawable.ic_nav_home, Routes.Home.route),
-        NavItem(R.string.nav_favorites, R.drawable.ic_nav_favorites, Routes.Favorites.route),
-        NavItem(R.string.nav_alerts, R.drawable.ic_nav_alerts, Routes.Alerts.route),
-        NavItem(R.string.nav_settings, R.drawable.ic_nav_settings, Routes.Settings.route)
+        NavItem(
+            R.string.nav_home,
+            R.drawable.ic_nav_home,
+            Routes.Home.route
+        ),
+        NavItem(
+            R.string.nav_favorites,
+            R.drawable.ic_nav_favorites,
+            Routes.Favorites.route
+        ),
+        NavItem(
+            R.string.nav_alerts,
+            R.drawable.ic_nav_alerts,
+            Routes.Alerts.route
+        ),
+        NavItem(
+            R.string.nav_settings,
+            R.drawable.ic_nav_settings,
+            Routes.Settings.route
+        )
     )
 
     NavigationBar(

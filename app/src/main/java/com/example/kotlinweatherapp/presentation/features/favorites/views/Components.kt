@@ -1,6 +1,7 @@
-package com.example.kotlinweatherapp.presentation.features.favorites
+package com.example.kotlinweatherapp.presentation.features.favorites.views
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -61,13 +62,14 @@ fun EmptyFavoritesState(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun FavoriteItemCard(location: FavoriteLocation, onDeleteClick: () -> Unit) {
+fun FavoriteItemCard(location: FavoriteLocation, onClick: () -> Unit, onDeleteClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(WeatherCardBg)
+            .clickable { onClick() }
             .padding(16.dp)
     ) {
         Box(
@@ -78,13 +80,15 @@ fun FavoriteItemCard(location: FavoriteLocation, onDeleteClick: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Outlined.LocationOn,
+                Icons.Outlined.LocationOn,
                 contentDescription = null,
                 tint = Color.White,
                 modifier = Modifier.size(20.dp)
             )
         }
+
         Spacer(modifier = Modifier.width(16.dp))
+
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = location.cityName,
@@ -93,14 +97,19 @@ fun FavoriteItemCard(location: FavoriteLocation, onDeleteClick: () -> Unit) {
                 fontWeight = FontWeight.Medium
             )
             Text(
-                text = "${location.latitude}, ${location.longitude}",
+                text = "${String.format("%.4f", location.latitude)}, ${
+                    String.format(
+                        "%.4f",
+                        location.longitude
+                    )
+                }",
                 color = WeatherTextSub,
                 fontSize = 13.sp
             )
         }
         IconButton(onClick = onDeleteClick) {
             Icon(
-                imageVector = Icons.Outlined.DeleteOutline,
+                Icons.Outlined.DeleteOutline,
                 contentDescription = stringResource(R.string.delete),
                 tint = Color(0xFFE57373)
             )

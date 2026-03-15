@@ -93,6 +93,12 @@ dependencies {
 
     // Google Play Services for Location
     implementation("com.google.android.gms:play-services-location:21.2.0")
+
+    // WorkManager for background API calls
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+    // AppCompatDelegate (Instant Language Switching)
+    implementation("androidx.appcompat:appcompat:1.6.1")
 }
 
 // FORCE Gradle to strictly use the Kotlin 2.1.10 standard libraries to prevent KSP crash

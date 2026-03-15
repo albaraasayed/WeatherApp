@@ -1,4 +1,4 @@
-package com.example.kotlinweatherapp.presentation.features.favorites
+package com.example.kotlinweatherapp.presentation.features.favorites.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,7 +37,6 @@ class FavoritesViewModel(
         _searchQuery.value = query
         searchJob?.cancel()
 
-        // 🌟 FIX: Ignore short queries AND Map Pins so we don't spam the API!
         if (query.length < 3 || query.startsWith("Map Pin:")) {
             _searchResults.value = Resource.Success(emptyList())
             return
@@ -66,6 +65,23 @@ class FavoritesViewModel(
                 )
             )
             clearSearch()
+        }
+    }
+
+    fun addFavoriteFromMap(lat: Double, lon: Double) {
+        viewModelScope.launch {
+            repository.reverseGeocode(lat, lon).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        val name = result.data ?: "Unknown Location"
+                        addFavorite(name, lat, lon)
+                    }
+                    is Resource.Error -> {
+                        addFavorite("Unknown Location", lat, lon)
+                    }
+                    else -> {}
+                }
+            }
         }
     }
 

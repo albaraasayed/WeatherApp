@@ -1,4 +1,4 @@
-package com.example.kotlinweatherapp.presentation.features.favorites
+package com.example.kotlinweatherapp.presentation.features.favorites.views
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.kotlinweatherapp.R
 import com.example.kotlinweatherapp.data.remote.dto.GeocodingResponse
+import com.example.kotlinweatherapp.presentation.common.MapLibreMapView
 import com.example.kotlinweatherapp.ui.theme.WeatherNavy
 import com.example.kotlinweatherapp.ui.theme.WeatherTextSub
 import com.example.kotlinweatherapp.utils.Resource
@@ -28,11 +29,12 @@ fun AddLocationDialog(
     searchResults: Resource<List<GeocodingResponse>>,
     onQueryChanged: (String) -> Unit,
     onDismiss: () -> Unit,
-    onLocationSelected: (name: String, lat: Double, lon: Double) -> Unit
+    onLocationSelected: (name: String, lat: Double, lon: Double) -> Unit,
+    onMapLocationSelected: (lat: Double, lon: Double) -> Unit
 ) {
     var selectedLat by remember { mutableStateOf<Double?>(null) }
     var selectedLon by remember { mutableStateOf<Double?>(null) }
-
+    
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(24.dp),
@@ -73,19 +75,12 @@ fun AddLocationDialog(
                         .clip(RoundedCornerShape(12.dp))
                 ) {
                     if (searchQuery.isBlank() || selectedLat != null) {
-                        com.example.kotlinweatherapp.presentation.common.MapLibreMapView(
+                        MapLibreMapView(
                             modifier = Modifier.fillMaxSize(),
                             onLocationSelected = { lat, lon ->
                                 selectedLat = lat
                                 selectedLon = lon
-                                onQueryChanged(
-                                    "Map Pin: ${
-                                        String.format(
-                                            "%.2f",
-                                            lat
-                                        )
-                                    }, ${String.format("%.2f", lon)}"
-                                )
+                                onQueryChanged("Map Pin: ${String.format("%.2f", lat)}, ${String.format("%.2f", lon)}")
                             }
                         )
                     } else {
@@ -103,7 +98,6 @@ fun AddLocationDialog(
                             is Resource.Success -> {
                                 val list = searchResults.data ?: emptyList()
                                 if (list.isEmpty()) {
-                                    // 🌟 SMARTER EMPTY STATE MESSAGE
                                     val emptyMessage = if (searchQuery.length < 3) {
                                         "Type at least 3 letters to search..."
                                     } else {
@@ -151,7 +145,7 @@ fun AddLocationDialog(
                             val lat = selectedLat
                             val lon = selectedLon
                             if (lat != null && lon != null) {
-                                onLocationSelected("Custom Pin", lat, lon)
+                                onMapLocationSelected(lat, lon)
                             }
                         },
                         modifier = Modifier.weight(1f),

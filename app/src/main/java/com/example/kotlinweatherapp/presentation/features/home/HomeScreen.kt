@@ -1,8 +1,6 @@
 package com.example.kotlinweatherapp.presentation.features.home
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -70,33 +68,7 @@ fun HomeScreen(
                 }
 
                 is HomeUiState.Success -> {
-                    val data = state.data
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        WeatherHeaderSection(city = data.city, date = data.date, time = data.time)
-
-                        CurrentWeatherHero(
-                            temperature = data.temperature,
-                            condition = data.condition,
-                            iconUrl = data.iconUrl
-                        )
-
-                        WeatherStatsCard(
-                            humidity = data.humidity,
-                            windSpeed = data.windSpeed,
-                            pressure = data.pressure,
-                            clouds = data.clouds
-                        )
-
-                        Spacer(modifier = Modifier.height(24.dp))
-                        HourlyForecastList(forecasts = data.hourlyForecast)
-                        Spacer(modifier = Modifier.height(24.dp))
-                        DailyForecastList(forecasts = data.dailyForecast)
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
+                    WeatherContentDisplay(data = state.data)
                 }
             }
         }

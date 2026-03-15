@@ -46,4 +46,35 @@
     <string name="language">اللغة</string>
     <string name="english">English</string>
     <string name="arabic">العربية</string>
+
+    <string name="weather_alerts">تنبيهات الطقس</string>
+    <string name="add_alert">إضافة تنبيه</string>
+    <string name="no_weather_alerts_set">لا توجد تنبيهات للطقس</string>
+    <string name="tap_to_add_alert">اضغط على زر + لإضافة تنبيه</string>
+    <string name="add_weather_alert">إضافة تنبيه طقس</string>
+    <string name="alert_type">نوع التنبيه</string>
+    <string name="alert_type_placeholder">مثال: تحذير من أمطار غزيرة</string>
+    <string name="duration">المدة</string>
+    <string name="duration_placeholder">مثال: 6:00 صباحاً - 12:00 مساءً</string>
+
+    <string name="weather_update_default">تحديث الطقس</string>
+    <string name="weather_check_message">تحقق من التطبيق لمعرفة حالة الطقس الحالية!</string>
+
+    <string name="select_time">اختر الوقت</string>
+    <string name="switch_to_keyboard">التبديل إلى لوحة المفاتيح</string>
+    <string name="switch_to_picker">التبديل إلى منتقي الوقت</string>
+
+    <string name="start_time">وقت البدء</string>
+    <string name="end_time">وقت الانتهاء</string>
+    <string name="alert_method">طريقة التنبيه</string>
+    <string name="notification">إشعار</string>
+    <string name="alarm">منبه</string>
+
+    <string name="condition_rain">مطر</string>
+    <string name="condition_snow">ثلج</string>
+    <string name="condition_clear">صافي</string>
+    <string name="condition_clouds">غيوم</string>
+    <string name="condition_thunderstorm">عاصفة رعدية</string>
+    <string name="condition_drizzle">رذاذ</string>
+    <string name="custom_location">موقع مخصص</string>
 </resources>

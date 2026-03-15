@@ -1,16 +1,15 @@
 package com.example.kotlinweatherapp.presentation.common
 
 import android.os.Bundle
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import org.maplibre.android.MapLibre
 import org.maplibre.android.maps.MapView
 
@@ -21,9 +20,7 @@ fun MapLibreMapView(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-
     MapLibre.getInstance(context)
-
     val mapView = remember { MapView(context) }
 
     DisposableEffect(lifecycleOwner) {
@@ -50,7 +47,6 @@ fun MapLibreMapView(
             mapView.apply {
                 getMapAsync { map ->
                     map.setStyle("https://demotiles.maplibre.org/style.json")
-
                     map.addOnMapClickListener { point ->
                         onLocationSelected(point.latitude, point.longitude)
                         true

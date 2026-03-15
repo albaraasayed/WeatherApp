@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,13 +22,47 @@ import coil3.compose.AsyncImage
 import com.example.kotlinweatherapp.R
 import com.example.kotlinweatherapp.presentation.features.home.DailyForecastUi
 import com.example.kotlinweatherapp.presentation.features.home.HourlyForecastUi
+import com.example.kotlinweatherapp.presentation.features.home.WeatherDataUi
 import com.example.kotlinweatherapp.ui.theme.WeatherCardBg
 import com.example.kotlinweatherapp.ui.theme.WeatherNavy
 import com.example.kotlinweatherapp.ui.theme.WeatherTextSub
 
 @Composable
+fun WeatherContentDisplay(
+    data: WeatherDataUi,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+        WeatherHeaderSection(city = data.city, date = data.date, time = data.time)
+        CurrentWeatherHero(
+            temperature = data.temperature,
+            unitSymbol = data.unitSymbol,
+            condition = data.condition,
+            iconUrl = data.iconUrl
+        )
+        WeatherStatsCard(
+            humidity = data.humidity,
+            windSpeed = data.windSpeed,
+            pressure = data.pressure,
+            clouds = data.clouds
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+        HourlyForecastList(forecasts = data.hourlyForecast)
+        Spacer(modifier = Modifier.height(24.dp))
+        DailyForecastList(forecasts = data.dailyForecast)
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
 fun CurrentWeatherHero(
     temperature: Int,
+    unitSymbol: String,
     condition: String,
     iconUrl: String,
     modifier: Modifier = Modifier
@@ -44,7 +80,7 @@ fun CurrentWeatherHero(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "${temperature}°C",
+            text = "$temperature$unitSymbol",
             fontSize = 64.sp,
             fontWeight = FontWeight.Bold,
             color = WeatherNavy
@@ -55,7 +91,10 @@ fun CurrentWeatherHero(
 }
 
 @Composable
-fun HourlyForecastList(forecasts: List<HourlyForecastUi>, modifier: Modifier = Modifier) {
+fun HourlyForecastList(
+    forecasts: List<HourlyForecastUi>,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier.padding(horizontal = 20.dp)) {
         Text(
             text = stringResource(R.string.hourly_forecast),
@@ -82,7 +121,7 @@ fun HourlyForecastList(forecasts: List<HourlyForecastUi>, modifier: Modifier = M
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "${item.temperature}°C",
+                        text = "${item.temperature}${item.unitSymbol}",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = WeatherNavy
@@ -94,7 +133,10 @@ fun HourlyForecastList(forecasts: List<HourlyForecastUi>, modifier: Modifier = M
 }
 
 @Composable
-fun DailyForecastList(forecasts: List<DailyForecastUi>, modifier: Modifier = Modifier) {
+fun DailyForecastList(
+    forecasts: List<DailyForecastUi>,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier.padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -131,12 +173,12 @@ fun DailyForecastList(forecasts: List<DailyForecastUi>, modifier: Modifier = Mod
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = "${item.highTemp}°C",
+                        text = "${item.highTemp}${item.unitSymbol}",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = WeatherNavy
                     )
-                    Text(text = "${item.lowTemp}°C", fontSize = 13.sp, color = WeatherTextSub)
+                    Text(text = "${item.lowTemp}${item.unitSymbol}", fontSize = 13.sp, color = WeatherTextSub)
                 }
             }
         }
@@ -145,7 +187,11 @@ fun DailyForecastList(forecasts: List<DailyForecastUi>, modifier: Modifier = Mod
 
 @Composable
 fun WeatherStatsCard(
-    humidity: Int, windSpeed: Double, pressure: Int, clouds: Int, modifier: Modifier = Modifier
+    humidity: Int,
+    windSpeed: Double,
+    pressure: Int,
+    clouds: Int,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
@@ -195,7 +241,12 @@ fun WeatherStatsCard(
 }
 
 @Composable
-fun StatTile(iconRes: Int, label: String, value: String, modifier: Modifier = Modifier) {
+fun StatTile(
+    iconRes: Int,
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
         Image(
             painter = painterResource(id = iconRes),
@@ -216,7 +267,12 @@ fun StatTile(iconRes: Int, label: String, value: String, modifier: Modifier = Mo
 }
 
 @Composable
-fun WeatherHeaderSection(city: String, date: String, time: String, modifier: Modifier = Modifier) {
+fun WeatherHeaderSection(
+    city: String,
+    date: String,
+    time: String,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
         Text(text = city, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = WeatherNavy)
         Spacer(modifier = Modifier.height(4.dp))

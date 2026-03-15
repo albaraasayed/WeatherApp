@@ -45,4 +45,35 @@
     <string name="language">Language</string>
     <string name="english">English</string>
     <string name="arabic">Arabic</string>
+
+    <string name="weather_alerts">Weather Alerts</string>
+    <string name="add_alert">Add Alert</string>
+    <string name="no_weather_alerts_set">No weather alerts set</string>
+    <string name="tap_to_add_alert">Tap the + button to add an alert</string>
+    <string name="add_weather_alert">Add Weather Alert</string>
+    <string name="alert_type">Alert Type</string>
+    <string name="alert_type_placeholder">e.g., Heavy Rain Warning</string>
+    <string name="duration">Duration</string>
+    <string name="duration_placeholder">e.g., 6:00 AM - 12:00 PM</string>
+
+    <string name="weather_update_default">Weather Update</string>
+    <string name="weather_check_message">Check the app for current weather conditions!</string>
+
+    <string name="select_time">Select Time</string>
+    <string name="switch_to_keyboard">Switch to Keyboard</string>
+    <string name="switch_to_picker">Switch to Picker</string>
+    
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="alert_method">Alert Method</string>
+    <string name="notification">Notification</string>
+    <string name="alarm">Alarm</string>
+
+    <string name="condition_rain">Rain</string>
+    <string name="condition_snow">Snow</string>
+    <string name="condition_clear">Clear</string>
+    <string name="condition_clouds">Clouds</string>
+    <string name="condition_thunderstorm">Thunderstorm</string>
+    <string name="condition_drizzle">Drizzle</string>
+    <string name="custom_location">Custom Location</string>
 </resources>

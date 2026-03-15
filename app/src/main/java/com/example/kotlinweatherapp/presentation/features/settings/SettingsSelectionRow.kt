@@ -3,6 +3,7 @@ package com.example.kotlinweatherapp.presentation.features.settings
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.kotlinweatherapp.ui.theme.WeatherNavy
@@ -50,12 +52,15 @@ fun SettingsSelectionRow(
                         contentColor = if (isSelected) Color.White else WeatherNavy
                     ),
                     border = if (isSelected) null else BorderStroke(1.dp, WeatherNavy),
-                    elevation = ButtonDefaults.buttonElevation(0.dp)
+                    elevation = ButtonDefaults.buttonElevation(0.dp),
+                    contentPadding = PaddingValues(horizontal = 4.dp)
                 ) {
                     Text(
                         text = displayText,
                         fontWeight = FontWeight.Medium,
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
