@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -25,6 +24,7 @@ import com.example.kotlinweatherapp.ui.theme.WeatherCardBg
 import com.example.kotlinweatherapp.ui.theme.WeatherNavy
 import androidx.compose.ui.res.stringResource
 import com.example.kotlinweatherapp.R
+import com.example.kotlinweatherapp.presentation.Dimens
 import com.example.kotlinweatherapp.presentation.features.favorites.viewmodels.FavoritesViewModel
 import com.example.kotlinweatherapp.presentation.navigation.Routes
 
@@ -53,7 +53,7 @@ fun FavoritesScreen(viewModel: FavoritesViewModel, navController: NavHostControl
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
                 )
-                HorizontalDivider(color = WeatherCardBg, thickness = 1.dp)
+                HorizontalDivider(color = WeatherCardBg, thickness = Dimens.spacingTiny.div(4)) // 1dp
             }
         },
         bottomBar = {
@@ -93,8 +93,8 @@ fun FavoritesScreen(viewModel: FavoritesViewModel, navController: NavHostControl
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    contentPadding = PaddingValues(Dimens.spacingExtraLarge),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spacingMedium)
                 ) {
                     items(favorites) { location ->
                         FavoriteItemCard(

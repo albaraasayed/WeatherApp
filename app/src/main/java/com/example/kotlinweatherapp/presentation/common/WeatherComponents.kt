@@ -16,10 +16,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.kotlinweatherapp.R
+import com.example.kotlinweatherapp.presentation.Dimens
 import com.example.kotlinweatherapp.presentation.features.home.DailyForecastUi
 import com.example.kotlinweatherapp.presentation.features.home.HourlyForecastUi
 import com.example.kotlinweatherapp.presentation.features.home.WeatherDataUi
@@ -51,11 +50,11 @@ fun WeatherContentDisplay(
             clouds = data.clouds
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingHuge))
         HourlyForecastList(forecasts = data.hourlyForecast)
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingHuge))
         DailyForecastList(forecasts = data.dailyForecast)
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingLarge))
     }
 }
 
@@ -70,23 +69,23 @@ fun CurrentWeatherHero(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 24.dp),
+            .padding(vertical = Dimens.spacingHuge),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AsyncImage(
             model = iconUrl,
             contentDescription = condition,
-            modifier = Modifier.size(120.dp)
+            modifier = Modifier.size(Dimens.iconHero)
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Dimens.spacingLarge))
         Text(
             text = "$temperature$unitSymbol",
-            fontSize = 64.sp,
+            fontSize = Dimens.fontHero,
             fontWeight = FontWeight.Bold,
             color = WeatherNavy
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(text = condition, fontSize = 18.sp, color = WeatherTextSub)
+        Spacer(modifier = Modifier.height(Dimens.spacingTiny))
+        Text(text = condition, fontSize = Dimens.fontSubTitle, color = WeatherTextSub)
     }
 }
 
@@ -95,34 +94,34 @@ fun HourlyForecastList(
     forecasts: List<HourlyForecastUi>,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.padding(horizontal = 20.dp)) {
+    Column(modifier = modifier.padding(horizontal = Dimens.spacingExtraLarge)) {
         Text(
             text = stringResource(R.string.hourly_forecast),
-            fontSize = 16.sp,
+            fontSize = Dimens.fontBodyLarge,
             fontWeight = FontWeight.Bold,
             color = WeatherNavy
         )
-        Spacer(modifier = Modifier.height(12.dp))
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Spacer(modifier = Modifier.height(Dimens.spacingMedium))
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(Dimens.spacingNormal)) {
             items(forecasts) { item ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(Dimens.cornerSmall))
                         .background(WeatherCardBg)
-                        .padding(horizontal = 14.dp, vertical = 12.dp)
+                        .padding(horizontal = Dimens.spacingExtraLarge, vertical = Dimens.spacingMedium)
                 ) {
-                    Text(text = item.time, fontSize = 13.sp, color = WeatherTextSub)
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = item.time, fontSize = Dimens.fontCaption, color = WeatherTextSub)
+                    Spacer(modifier = Modifier.height(Dimens.spacingSmall))
                     AsyncImage(
                         model = item.iconUrl,
                         contentDescription = null,
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(Dimens.iconStandard)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Dimens.spacingSmall))
                     Text(
                         text = "${item.temperature}${item.unitSymbol}",
-                        fontSize = 14.sp,
+                        fontSize = Dimens.fontBodySmall,
                         fontWeight = FontWeight.SemiBold,
                         color = WeatherNavy
                     )
@@ -138,12 +137,12 @@ fun DailyForecastList(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        modifier = modifier.padding(horizontal = Dimens.spacingExtraLarge),
+        verticalArrangement = Arrangement.spacedBy(Dimens.spacingNormal)
     ) {
         Text(
             text = stringResource(R.string.five_day_forecast),
-            fontSize = 16.sp,
+            fontSize = Dimens.fontBodyLarge,
             fontWeight = FontWeight.Bold,
             color = WeatherNavy
         )
@@ -152,33 +151,33 @@ fun DailyForecastList(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(14.dp))
+                    .clip(RoundedCornerShape(Dimens.cornerMedium))
                     .background(WeatherCardBg)
-                    .padding(horizontal = 16.dp, vertical = 14.dp)
+                    .padding(horizontal = Dimens.spacingLarge, vertical = Dimens.spacingBodyLarge)
             ) {
                 AsyncImage(
                     model = item.iconUrl,
                     contentDescription = item.day,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(Dimens.iconLarge)
                 )
-                Spacer(modifier = Modifier.width(14.dp))
+                Spacer(modifier = Modifier.width(Dimens.spacingBodyLarge))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = item.day,
-                        fontSize = 15.sp,
+                        fontSize = Dimens.fontBody,
                         fontWeight = FontWeight.SemiBold,
                         color = WeatherNavy
                     )
-                    Text(text = item.date, fontSize = 13.sp, color = WeatherTextSub)
+                    Text(text = item.date, fontSize = Dimens.fontCaption, color = WeatherTextSub)
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
                         text = "${item.highTemp}${item.unitSymbol}",
-                        fontSize = 15.sp,
+                        fontSize = Dimens.fontBody,
                         fontWeight = FontWeight.SemiBold,
                         color = WeatherNavy
                     )
-                    Text(text = "${item.lowTemp}${item.unitSymbol}", fontSize = 13.sp, color = WeatherTextSub)
+                    Text(text = "${item.lowTemp}${item.unitSymbol}", fontSize = Dimens.fontCaption, color = WeatherTextSub)
                 }
             }
         }
@@ -196,12 +195,12 @@ fun WeatherStatsCard(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .padding(horizontal = Dimens.spacingExtraLarge)
+            .clip(RoundedCornerShape(Dimens.cornerLarge))
             .background(WeatherCardBg)
-            .padding(16.dp)
+            .padding(Dimens.spacingLarge)
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(Dimens.spacingLarge)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -251,14 +250,14 @@ fun StatTile(
         Image(
             painter = painterResource(id = iconRes),
             contentDescription = label,
-            modifier = Modifier.size(28.dp)
+            modifier = Modifier.size(Dimens.iconMedium)
         )
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(modifier = Modifier.width(Dimens.spacingNormal))
         Column {
-            Text(text = label, fontSize = 13.sp, color = WeatherTextSub)
+            Text(text = label, fontSize = Dimens.fontCaption, color = WeatherTextSub)
             Text(
                 text = value,
-                fontSize = 15.sp,
+                fontSize = Dimens.fontBody,
                 fontWeight = FontWeight.SemiBold,
                 color = WeatherNavy
             )
@@ -273,10 +272,10 @@ fun WeatherHeaderSection(
     time: String,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
-        Text(text = city, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = WeatherNavy)
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(text = date, fontSize = 14.sp, color = WeatherTextSub)
-        Text(text = time, fontSize = 14.sp, color = WeatherTextSub)
+    Column(modifier = modifier.padding(horizontal = Dimens.spacingExtraLarge, vertical = Dimens.spacingLarge)) {
+        Text(text = city, fontSize = Dimens.fontHeader, fontWeight = FontWeight.Bold, color = WeatherNavy)
+        Spacer(modifier = Modifier.height(Dimens.spacingTiny))
+        Text(text = date, fontSize = Dimens.fontBodySmall, color = WeatherTextSub)
+        Text(text = time, fontSize = Dimens.fontBodySmall, color = WeatherTextSub)
     }
 }

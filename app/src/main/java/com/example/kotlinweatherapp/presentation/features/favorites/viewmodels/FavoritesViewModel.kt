@@ -7,55 +7,54 @@ import com.example.kotlinweatherapp.data.local.dao.FavoriteLocationDao
 import com.example.kotlinweatherapp.data.remote.dto.GeocodingResponse
 import com.example.kotlinweatherapp.data.repository.WeatherRepository
 import com.example.kotlinweatherapp.utils.Resource
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class FavoritesViewModel(
     private val dao: FavoriteLocationDao,
     private val repository: WeatherRepository
 ) : ViewModel() {
 
     val favorites: StateFlow<List<FavoriteLocation>> = dao.getAllFavorites()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(
+            viewModelScope, SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
-    private val _searchResults =
-        MutableStateFlow<Resource<List<GeocodingResponse>>>(Resource.Success(emptyList()))
-    val searchResults = _searchResults.asStateFlow()
-
-    private var searchJob: Job? = null
+    val searchResults: StateFlow<Resource<List<GeocodingResponse>>> = searchQuery
+        .debounce(500L)
+        .distinctUntilChanged()
+        .flatMapLatest { query ->
+            if (query.length < 3 || query.startsWith("Map Pin:")) {
+                flowOf(Resource.Success(emptyList()))
+            } else {
+                repository.searchCity(query)
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = Resource.Success(emptyList())
+        )
 
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
-        searchJob?.cancel()
-
-        if (query.length < 3 || query.startsWith("Map Pin:")) {
-            _searchResults.value = Resource.Success(emptyList())
-            return
-        }
-
-        searchJob = viewModelScope.launch {
-            delay(500)
-            repository.searchCity(query).collect { result ->
-                _searchResults.value = result
-            }
-        }
     }
 
     fun clearSearch() {
         _searchQuery.value = ""
-        _searchResults.value = Resource.Success(emptyList())
     }
 
-    fun addFavorite(cityName: String, lat: Double, lon: Double) {
+    fun addFavorite(
+        cityName: String,
+        lat: Double,
+        lon: Double
+    ) {
         viewModelScope.launch {
             dao.insertFavorite(
                 FavoriteLocation(
@@ -68,18 +67,16 @@ class FavoritesViewModel(
         }
     }
 
-    fun addFavoriteFromMap(lat: Double, lon: Double) {
+    fun addFavoriteFromMap(
+        lat: Double,
+        lon: Double
+    ) {
         viewModelScope.launch {
             repository.reverseGeocode(lat, lon).collect { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        val name = result.data ?: "Unknown Location"
-                        addFavorite(name, lat, lon)
-                    }
-                    is Resource.Error -> {
-                        addFavorite("Unknown Location", lat, lon)
-                    }
-                    else -> {}
+                if (result is Resource.Success) {
+                    addFavorite(result.data ?: "Unknown Location", lat, lon)
+                } else if (result is Resource.Error) {
+                    addFavorite("Unknown Location", lat, lon)
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.example.kotlinweatherapp.presentation.features.alerts
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,16 +23,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.kotlinweatherapp.R
 import com.example.kotlinweatherapp.data.local.AlertEntity
+import com.example.kotlinweatherapp.presentation.Dimens
 import com.example.kotlinweatherapp.presentation.navigation.WeatherBottomNavBar
 import com.example.kotlinweatherapp.ui.theme.WeatherCardBg
 import com.example.kotlinweatherapp.ui.theme.WeatherNavy
@@ -40,9 +41,19 @@ import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlertsScreen(viewModel: AlertsViewModel, navController: NavHostController) {
+fun AlertsScreen(
+    viewModel: AlertsViewModel,
+    navController: NavHostController
+) {
     val alerts by viewModel.alerts.collectAsStateWithLifecycle()
     var showDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.eventFlow.collect { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -58,9 +69,11 @@ fun AlertsScreen(viewModel: AlertsViewModel, navController: NavHostController) {
                             fontWeight = FontWeight.Bold
                         )
                     },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.White
+                    )
                 )
-                HorizontalDivider(color = WeatherCardBg, thickness = 1.dp)
+                HorizontalDivider(color = WeatherCardBg, thickness = Dimens.spacingTiny.div(4)) // 1dp
             }
         },
         bottomBar = {
@@ -68,7 +81,8 @@ fun AlertsScreen(viewModel: AlertsViewModel, navController: NavHostController) {
                 currentRoute = currentRoute,
                 onNavigate = { route ->
                     navController.navigate(route) {
-                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        popUpTo(navController.graph.startDestinationId)
+                        { saveState = true }
                         launchSingleTop = true
                         restoreState = true
                     }
@@ -82,7 +96,10 @@ fun AlertsScreen(viewModel: AlertsViewModel, navController: NavHostController) {
                 contentColor = Color.White,
                 shape = CircleShape
             ) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_alert))
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_alert)
+                )
             }
         },
         containerColor = Color.White
@@ -100,27 +117,27 @@ fun AlertsScreen(viewModel: AlertsViewModel, navController: NavHostController) {
                     Icon(
                         Icons.Outlined.Notifications,
                         contentDescription = null,
-                        modifier = Modifier.size(64.dp),
+                        modifier = Modifier.size(Dimens.iconExtraLarge),
                         tint = WeatherTextSub.copy(alpha = 0.5f)
                     )
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(Dimens.spacingLarge))
                     Text(
                         text = stringResource(R.string.no_weather_alerts_set),
                         color = WeatherNavy,
-                        fontSize = 18.sp,
+                        fontSize = Dimens.fontSubTitle,
                         fontWeight = FontWeight.Medium
                     )
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(Dimens.spacingSmall))
                     Text(
                         text = stringResource(R.string.tap_to_add_alert),
                         color = WeatherTextSub,
-                        fontSize = 14.sp
+                        fontSize = Dimens.fontBodySmall
                     )
                 }
             } else {
                 LazyColumn(
-                    contentPadding = PaddingValues(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    contentPadding = PaddingValues(Dimens.spacingExtraLarge),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spacingMedium)
                 ) {
                     items(alerts, key = { it.id }) { alert ->
                         AlertItemCard(
@@ -145,7 +162,11 @@ fun AlertsScreen(viewModel: AlertsViewModel, navController: NavHostController) {
 }
 
 @Composable
-fun AlertItemCard(alert: AlertEntity, onToggle: (Boolean) -> Unit, onDelete: () -> Unit) {
+fun AlertItemCard(
+    alert: AlertEntity,
+    onToggle: (Boolean) -> Unit,
+    onDelete: () -> Unit
+) {
     val conditionLabel = when (alert.alertType) {
         "Rain" -> stringResource(R.string.condition_rain)
         "Snow" -> stringResource(R.string.condition_snow)
@@ -160,13 +181,13 @@ fun AlertItemCard(alert: AlertEntity, onToggle: (Boolean) -> Unit, onDelete: () 
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(Dimens.cornerLarge))
             .background(WeatherCardBg)
-            .padding(16.dp)
+            .padding(Dimens.spacingLarge)
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(Dimens.iconStandard)
                 .clip(CircleShape)
                 .background(if (alert.isEnabled) WeatherNavy else Color.LightGray),
             contentAlignment = Alignment.Center
@@ -177,15 +198,15 @@ fun AlertItemCard(alert: AlertEntity, onToggle: (Boolean) -> Unit, onDelete: () 
                 } else Icons.Outlined.NotificationsOff,
                 null,
                 tint = Color.White,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(Dimens.iconSmall)
             )
         }
-        Spacer(Modifier.width(16.dp))
+        Spacer(Modifier.width(Dimens.spacingLarge))
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 conditionLabel,
                 color = WeatherNavy,
-                fontSize = 16.sp,
+                fontSize = Dimens.fontBodyLarge,
                 fontWeight = FontWeight.Medium
             )
             Text(
@@ -195,7 +216,7 @@ fun AlertItemCard(alert: AlertEntity, onToggle: (Boolean) -> Unit, onDelete: () 
                     )
                 })",
                 color = WeatherTextSub,
-                fontSize = 13.sp
+                fontSize = Dimens.fontCaption
             )
         }
         Switch(
@@ -235,10 +256,10 @@ fun AddAlertDialog(
         "Thunderstorm" to R.string.condition_thunderstorm,
         "Drizzle" to R.string.condition_drizzle
     )
-    
+
     var expanded by remember { mutableStateOf(false) }
     var selectedKey by remember { mutableStateOf(weatherConditions.keys.first()) }
-    
+
     var isAlarm by remember { mutableStateOf(false) }
 
     val currentTime = Calendar.getInstance()
@@ -252,27 +273,27 @@ fun AddAlertDialog(
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
-            shape = RoundedCornerShape(24.dp),
+            shape = RoundedCornerShape(Dimens.cornerExtraLarge),
             color = Color.White,
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier
-                    .padding(24.dp)
+                    .padding(Dimens.spacingHuge)
                     .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(Dimens.spacingLarge)
             ) {
                 Text(
                     text = stringResource(R.string.add_weather_alert),
                     color = WeatherNavy,
-                    fontSize = 20.sp,
+                    fontSize = Dimens.fontTitle,
                     fontWeight = FontWeight.Bold
                 )
 
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.alert_type), color = WeatherNavy, fontSize = 14.sp)
-                    Spacer(Modifier.height(4.dp))
-                    
+                    Text(stringResource(R.string.alert_type), color = WeatherNavy, fontSize = Dimens.fontBodySmall)
+                    Spacer(Modifier.height(Dimens.spacingTiny))
+
                     ExposedDropdownMenuBox(
                         expanded = expanded,
                         onExpandedChange = { expanded = !expanded },
@@ -284,7 +305,7 @@ fun AddAlertDialog(
                             readOnly = true,
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                             modifier = Modifier.menuAnchor(),
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(Dimens.cornerSmall),
                             colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
                         )
                         ExposedDropdownMenu(
@@ -306,22 +327,22 @@ fun AddAlertDialog(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.spacingSmall)
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             stringResource(R.string.start_time),
                             color = WeatherNavy,
-                            fontSize = 14.sp
+                            fontSize = Dimens.fontBodySmall
                         )
-                        Spacer(Modifier.height(4.dp))
+                        Spacer(Modifier.height(Dimens.spacingTiny))
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(12.dp))
+                                .clip(RoundedCornerShape(Dimens.cornerSmall))
                                 .background(WeatherCardBg)
                                 .clickable { showStartTimePicker = true }
-                                .padding(12.dp)
+                                .padding(Dimens.spacingMedium)
                         ) {
                             Text(
                                 String.format("%02d:%02d", startHour, startMinute),
@@ -333,16 +354,16 @@ fun AddAlertDialog(
                         Text(
                             stringResource(R.string.end_time),
                             color = WeatherNavy,
-                            fontSize = 14.sp
+                            fontSize = Dimens.fontBodySmall
                         )
-                        Spacer(Modifier.height(4.dp))
+                        Spacer(Modifier.height(Dimens.spacingTiny))
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(12.dp))
+                                .clip(RoundedCornerShape(Dimens.cornerSmall))
                                 .background(WeatherCardBg)
                                 .clickable { showEndTimePicker = true }
-                                .padding(12.dp)
+                                .padding(Dimens.spacingMedium)
                         ) {
                             Text(
                                 String.format("%02d:%02d", endHour, endMinute),
@@ -356,7 +377,7 @@ fun AddAlertDialog(
                     Text(
                         stringResource(R.string.alert_method),
                         color = WeatherNavy,
-                        fontSize = 14.sp
+                        fontSize = Dimens.fontBodySmall
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(selected = !isAlarm, onClick = { isAlarm = false })
@@ -364,7 +385,7 @@ fun AddAlertDialog(
                             stringResource(R.string.notification),
                             color = WeatherNavy,
                             modifier = Modifier.clickable { isAlarm = false })
-                        Spacer(Modifier.width(16.dp))
+                        Spacer(Modifier.width(Dimens.spacingLarge))
                         RadioButton(selected = isAlarm, onClick = { isAlarm = true })
                         Text(
                             stringResource(R.string.alarm),
@@ -375,13 +396,13 @@ fun AddAlertDialog(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.spacingMedium)
                 ) {
                     OutlinedButton(
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(1.dp, WeatherNavy)
+                        shape = RoundedCornerShape(Dimens.cornerSmall),
+                        border = BorderStroke(Dimens.spacingTiny.div(4), WeatherNavy) // 1dp
                     ) { Text(stringResource(R.string.cancel), color = WeatherNavy) }
                     Button(
                         onClick = {
@@ -395,7 +416,7 @@ fun AddAlertDialog(
                             )
                         },
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(Dimens.cornerSmall),
                         colors = ButtonDefaults.buttonColors(containerColor = WeatherNavy)
                     ) { Text(stringResource(R.string.add), color = Color.White) }
                 }
@@ -442,19 +463,19 @@ fun TimePickerDialog(
     var showKeyboard by remember { mutableStateOf(false) }
 
     Dialog(onDismissRequest = onDismiss) {
-        Surface(shape = RoundedCornerShape(24.dp), color = Color.White) {
+        Surface(shape = RoundedCornerShape(Dimens.cornerExtraLarge), color = Color.White) {
             Column(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier.padding(Dimens.spacingHuge),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     stringResource(R.string.select_time),
                     color = WeatherNavy,
-                    fontSize = 18.sp,
+                    fontSize = Dimens.fontSubTitle,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.Start)
                 )
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(Dimens.spacingLarge))
 
                 if (showKeyboard) {
                     TimeInput(state = state)

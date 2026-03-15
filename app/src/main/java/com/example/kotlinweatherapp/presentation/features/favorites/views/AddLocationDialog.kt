@@ -1,6 +1,8 @@
 package com.example.kotlinweatherapp.presentation.features.favorites.views
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.kotlinweatherapp.R
 import com.example.kotlinweatherapp.data.remote.dto.GeocodingResponse
+import com.example.kotlinweatherapp.presentation.Dimens
 import com.example.kotlinweatherapp.presentation.common.MapLibreMapView
 import com.example.kotlinweatherapp.ui.theme.WeatherNavy
 import com.example.kotlinweatherapp.ui.theme.WeatherTextSub
@@ -37,18 +40,18 @@ fun AddLocationDialog(
     
     Dialog(onDismissRequest = onDismiss) {
         Surface(
-            shape = RoundedCornerShape(24.dp),
+            shape = RoundedCornerShape(Dimens.cornerExtraLarge),
             color = Color.White,
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
-                modifier = Modifier.padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier.padding(Dimens.spacingHuge),
+                verticalArrangement = Arrangement.spacedBy(Dimens.spacingLarge)
             ) {
                 Text(
                     text = stringResource(R.string.add_favorite_location),
                     color = WeatherNavy,
-                    fontSize = 20.sp,
+                    fontSize = Dimens.fontTitle,
                     fontWeight = FontWeight.Bold
                 )
                 OutlinedTextField(
@@ -65,14 +68,14 @@ fun AddLocationDialog(
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(Dimens.cornerSmall),
                     singleLine = true
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .height(Dimens.mapHeight)
+                        .clip(RoundedCornerShape(Dimens.cornerSmall))
                 ) {
                     if (searchQuery.isBlank() || selectedLat != null) {
                         MapLibreMapView(
@@ -118,7 +121,7 @@ fun AddLocationDialog(
                                                 Text(
                                                     "${city.name}, ${city.country}",
                                                     color = WeatherNavy,
-                                                    fontSize = 16.sp
+                                                    fontSize = Dimens.fontBodyLarge
                                                 )
                                             }
                                         }
@@ -130,13 +133,13 @@ fun AddLocationDialog(
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.spacingMedium)
                 ) {
                     OutlinedButton(
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(1.dp, WeatherNavy)
+                        shape = RoundedCornerShape(Dimens.cornerSmall),
+                        border = BorderStroke(Dimens.spacingTiny.div(4), WeatherNavy) // 1dp
                     ) {
                         Text(text = stringResource(R.string.cancel), color = WeatherNavy)
                     }
@@ -149,7 +152,7 @@ fun AddLocationDialog(
                             }
                         },
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(Dimens.cornerSmall),
                         colors = ButtonDefaults.buttonColors(containerColor = WeatherNavy),
                         enabled = selectedLat != null
                     ) { Text(text = stringResource(R.string.add), color = Color.White) }

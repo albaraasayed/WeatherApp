@@ -5,14 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.kotlinweatherapp.data.local.datastore.SettingsRepository
 import com.example.kotlinweatherapp.data.repository.WeatherRepository
 import com.example.kotlinweatherapp.utils.Resource
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
+
+// 🌟 UI EVENT: Sealed interface for one-time actions
+sealed interface UiEvent {
+    data class ShowSnackbar(val message: String) : UiEvent
+}
 
 class HomeViewModel(
     private val repository: WeatherRepository,
@@ -21,6 +22,10 @@ class HomeViewModel(
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    // 🌟 SHARED FLOW: Used for one-time events like showing Snackbars
+    private val _uiEvent = MutableSharedFlow<UiEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
 
     var currentLat: Double = 31.2001
     var currentLon: Double = 29.9187
@@ -44,8 +49,6 @@ class HomeViewModel(
         currentLon = lon
 
         viewModelScope.launch {
-            _uiState.value = HomeUiState.Loading
-
             val units = settingsRepository.tempUnitPrefFlow.first()
             val windUnit = settingsRepository.windUnitPrefFlow.first()
             val lang = settingsRepository.langPrefFlow.first()
@@ -59,7 +62,12 @@ class HomeViewModel(
 
             repository.getForecast(lat = lat, lon = lon, units = units, lang = lang).collect { result ->
                 when (result) {
-                    is Resource.Loading -> { }
+                    is Resource.Loading -> {
+                        // Only show loading if we don't already have success data
+                        if (_uiState.value !is HomeUiState.Success) {
+                            _uiState.value = HomeUiState.Loading
+                        }
+                    }
                     is Resource.Success -> {
                         val response = result.data
                         if (response != null && response.list.isNotEmpty()) {
@@ -108,7 +116,16 @@ class HomeViewModel(
                             _uiState.value = HomeUiState.Success(weatherData)
                         }
                     }
-                    is Resource.Error -> _uiState.value = HomeUiState.Error(result.message ?: "Unknown error")
+                    is Resource.Error -> {
+                        val message = result.message ?: "Unknown error"
+                        // If we already have success data, don't overwrite it with error state.
+                        // Instead, emit a one-time event to show a Snackbar.
+                        if (_uiState.value is HomeUiState.Success) {
+                            _uiEvent.emit(UiEvent.ShowSnackbar(message))
+                        } else {
+                            _uiState.value = HomeUiState.Error(message)
+                        }
+                    }
                 }
             }
         }
