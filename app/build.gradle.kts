@@ -40,6 +40,12 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        resources {
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
+        }
+    }
 }
 
 dependencies {
@@ -53,6 +59,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.junit.ktx)
+
+    // Existing Default Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -60,6 +69,18 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+
+    val mockkVersion = "1.13.11"
+    val coroutinesTestVersion = "1.8.1"
+
+    // Local Tests
+    testImplementation("io.mockk:mockk:$mockkVersion")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesTestVersion")
+    testImplementation("androidx.arch.core:core-testing:2.2.0") // For InstantTaskExecutorRule
+
+    androidTestImplementation("io.mockk:mockk-android:$mockkVersion")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesTestVersion")
 
     // Core Retrofit and Gson Converter
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -82,6 +103,10 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
+    // Room Testing
+    testImplementation("androidx.room:room-testing:$roomVersion")
+    androidTestImplementation("androidx.room:room-testing:$roomVersion")
+
     // Jetpack Compose Navigation
     implementation("androidx.navigation:navigation-compose:2.8.5")
 
@@ -100,7 +125,6 @@ dependencies {
     // AppCompatDelegate (Instant Language Switching)
     implementation("androidx.appcompat:appcompat:1.6.1")
 }
-
 // FORCE Gradle to strictly use the Kotlin 2.1.10 standard libraries to prevent KSP crash
 configurations.all {
     resolutionStrategy {

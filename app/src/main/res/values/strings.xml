@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KotlinWeatherApp</string>
+    <string name="app_name">Real Cloud</string>
 
     <string name="nav_home">Home</string>
     <string name="nav_favorites">Favorites</string>

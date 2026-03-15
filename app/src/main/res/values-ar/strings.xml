@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">KotlinWeatherApp</string>
+    <string name="app_name">سحابة حقيقية</string>
 
     <string name="nav_home">الرئيسية</string>
     <string name="nav_favorites">المفضلة</string>
